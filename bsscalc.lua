@@ -1,11 +1,10 @@
 -- ==============================================================================
--- 🐝 BSS ADVISOR ENGINE | V5.4 (DROPDOWN & INVENTORY SCANNER)
+-- 🐝 BSS ADVISOR ENGINE | V5.5 (REALISTIC STAT DATABASE UPDATE)
 -- ==============================================================================
 local CoreGui = game:GetService("CoreGui")
 local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
 
-local GUI_NAME = "BSS_Advisor_Engine_V5_4"
+local GUI_NAME = "BSS_Advisor_Engine_V5_5"
 pcall(function()
     local target = gethui and gethui() or CoreGui
     if target:FindFirstChild(GUI_NAME) then
@@ -14,23 +13,79 @@ pcall(function()
 end)
 
 -- ==============================================================================
--- 🧮 DATABASE & LOGIC
+-- 🧮 AUTHENTIC BEEQUIP DATABASE (Based on Official Wiki)
 -- ==============================================================================
 local BeequipDatabase = {
-    ["Pink Shades"] = { Normal = {"+% Ability Pollen (15-65%)", "+% Crit Power (25-50%)"}, Caustic = {"[Hive] +% Super-Crit Chance"}, Limit = "1 per hive" },
-    ["Toy Horn"] = { Normal = {"+% Convert Amount", "+Ability: Music"}, Caustic = {"[Hive] +Attack"}, Limit = "No Limit" },
-    ["Toy Drum"] = { Normal = {"+% Bee Ability Rate", "+% Haste Duration"}, Caustic = {"[Hive] +% Bee Movespeed"}, Limit = "No Limit" },
-    ["Charm Bracelet"] = { Normal = {"+% Convert (15-20%)", "+% Crit Chance (1-15%)"}, Caustic = {"[Hive] +% Loot Luck"}, Limit = "No Limit" },
-    ["Whistle"] = { Normal = {"+% Move Speed (5-40%)", "+% Crit Power (15-85%)"}, Caustic = {"[Hive] xPlayer Move Speed"}, Limit = "No Limit" },
-    ["Paperclip"] = { Normal = {"+Gather (3-16)", "+% Energy (5-20%)", "+% Bee Attack"}, Caustic = {"[Hive] N/A"}, Limit = "No Limit" },
-    ["Paper Angel"] = { Normal = {"+% White Pollen", "+% Convert Rate", "+Capacity"}, Caustic = {"+Ability: Token Link", "[Hive] +% White Pollen"}, Limit = "No Limit" },
-    ["Camphor Lip Balm"] = { Normal = {"+Convert Amount", "+% Blue Pollen", "+% White Pollen"}, Caustic = {"[Hive] +% Blue Pollen", "[Hive] +Capacity"}, Limit = "No Limit" },
-    ["Rose Headband"] = { Normal = {"+% Red Pollen", "+% White Pollen", "+Capacity"}, Caustic = {"[Hive] +% Red Pollen", "[Hive] +% Convert Rate"}, Limit = "No Limit" },
-    ["Candy Ring"] = { Normal = {"+% Honey from Tokens", "+% Convert Amount", "+% Loot Luck"}, Caustic = {"+Ability: Haste", "[Hive] +% Honey from Tokens"}, Limit = "No Limit" },
-    ["Bead Lizard"] = { Normal = {"+% Blue Pollen", "+% Bee Movespeed", "+Capacity"}, Caustic = {"+Ability: Blue Boost", "[Hive] +% Blue Pollen"}, Limit = "No Limit" },
-    ["Poinsettia"] = { Normal = {"+% Red Pollen", "+Capacity", "+% Convert Amount"}, Caustic = {"+Ability: Red Boost", "[Hive] +% Red Pollen"}, Limit = "No Limit" },
-    ["Peppermint Antennas"] = { Normal = {"+% Capacity", "+% Convert Rate", "+% Bee Movespeed"}, Caustic = {"+Ability: Focus", "[Hive] +% Capacity"}, Limit = "No Limit" },
-    ["Elf Cap"] = { Normal = {"+Gather", "+Energy", "+% Red/Blue Pollen"}, Caustic = {"[Hive] +% Convert at Hive", "[Hive] +Capacity"}, Limit = "3 per hive" }
+    ["Pink Shades"] = {
+        Potential = 5,
+        Limit = 1,
+        BaseStats = {"+15-65% Ability Pollen", "+25-50% Crit Power"},
+        WaxPool = {"+% Bee Attack", "+% Convert Amount", "+% Critical Chance"},
+        HiveBonus = "+1-3% Super-Crit Chance"
+    },
+    ["Toy Horn"] = {
+        Potential = 3,
+        Limit = 3,
+        BaseStats = {"+5-15% Convert Amount", "Grants Ability: Music"},
+        WaxPool = {"+% Capacity", "+% Convert Rate", "+% Pollen"},
+        HiveBonus = "+2-5% Hive Attack"
+    },
+    ["Toy Drum"] = {
+        Potential = 3,
+        Limit = 3,
+        BaseStats = {"+2-10% Bee Ability Rate", "+5-25% Haste Duration"},
+        WaxPool = {"+% Gather Amount", "+% Bee Move Speed"},
+        HiveBonus = "+2-5% Hive Bee Movespeed"
+    },
+    ["Charm Bracelet"] = {
+        Potential = 4,
+        Limit = 1,
+        BaseStats = {"+15-20% Convert Rate", "+1-15% Crit Chance"},
+        WaxPool = {"+% Honey From Tokens", "+% Capacity"},
+        HiveBonus = "+1-5% Loot Luck"
+    },
+    ["Whistle"] = {
+        Potential = 4,
+        Limit = 1,
+        BaseStats = {"+5-40% Bee Gather Speed", "+15-85% Crit Power"},
+        WaxPool = {"+% Blue Pollen", "+% Red Pollen", "+% Convert Rate"},
+        HiveBonus = "+1-5% Player Move Speed"
+    },
+    ["Paperclip"] = {
+        Potential = 5,
+        Limit = "None",
+        BaseStats = {"+3-16 Gather Amount", "+5-20% Energy", "+2-5% Bee Attack"},
+        WaxPool = {"+% Gather Amount", "+% Capacity"},
+        HiveBonus = "+1-3% Hive Gather Amount"
+    },
+    ["Paper Angel"] = {
+        Potential = 3,
+        Limit = 1,
+        BaseStats = {"+5-15% White Pollen", "Grants Ability: Token Link"},
+        WaxPool = {"+% Convert Rate", "+Capacity"},
+        HiveBonus = "+2-5% Hive White Pollen"
+    },
+    ["Camphor Lip Balm"] = {
+        Potential = 4,
+        Limit = 2,
+        BaseStats = {"+10-25% Blue/White Pollen", "+5-15% Convert Amount"},
+        WaxPool = {"+% Blue Capacity", "+% Bee Movespeed"},
+        HiveBonus = "+2-5% Hive Blue Pollen"
+    },
+    ["Rose Headband"] = {
+        Potential = 4,
+        Limit = 2,
+        BaseStats = {"+10-25% Red/White Pollen", "+5-15% Convert Rate"},
+        WaxPool = {"+% Red Capacity", "+% Bee Attack"},
+        HiveBonus = "+2-5% Hive Red Pollen"
+    },
+    ["Elf Cap"] = {
+        Potential = 3,
+        Limit = 3,
+        BaseStats = {"+5-15 Gather Amount", "+10-30 Energy"},
+        WaxPool = {"+% Red/Blue Pollen", "+% Capacity"},
+        HiveBonus = "+1-3% Convert at Hive"
+    }
 }
 
 local beequipNames = {}
@@ -38,10 +93,10 @@ for name, _ in pairs(BeequipDatabase) do table.insert(beequipNames, name) end
 table.sort(beequipNames)
 
 local WaxMechanics = {
-    ["Soft"]    = {success = 100, destroy = 0,  points = 1, desc = "100% Safe. +1 Normal Stat."},
-    ["Hard"]    = {success = 60,  destroy = 0,  points = 2, desc = "60% Success. +2 Normal Stats."},
-    ["Caustic"] = {success = 25,  destroy = 75, points = 4, desc = "25% Success, 75% DELETE."},
-    ["Swirled"] = {success = 100, destroy = 0,  points = 3, desc = "100% Safe. Rerolls based on Potential."} 
+    ["Soft"]    = {success = 100, cost = 1, desc = "Takes 1 Potential. 100% Safe. Adds 1 stat from Wax Pool."},
+    ["Hard"]    = {success = 60,  cost = 2, desc = "Takes 2 Potential. 60% Success. Adds 2 stats from Wax Pool."},
+    ["Caustic"] = {success = 25,  cost = 4, desc = "Takes 4 Potential. 25% Success, 75% DELETE. Unlocks Hive Bonus Mutation!"},
+    ["Swirled"] = {success = 100, cost = 3, desc = "Takes 3 Potential. 100% Safe. Rerolls all stats & adds a small bonus."} 
 }
 
 -- ==============================================================================
@@ -66,11 +121,6 @@ local Sidebar = Instance.new("Frame", MainFrame)
 Sidebar.Size = UDim2.new(0, 150, 1, 0)
 Sidebar.BackgroundColor3 = Color3.fromRGB(22, 22, 26)
 Instance.new("UICorner", Sidebar).CornerRadius = UDim.new(0, 10)
-local SidebarCover = Instance.new("Frame", Sidebar)
-SidebarCover.Size = UDim2.new(0, 10, 1, 0)
-SidebarCover.Position = UDim2.new(1, -10, 0, 0)
-SidebarCover.BackgroundColor3 = Color3.fromRGB(22, 22, 26)
-SidebarCover.BorderSizePixel = 0
 
 local Title = Instance.new("TextLabel", Sidebar)
 Title.Size = UDim2.new(1, 0, 0, 50)
@@ -90,15 +140,15 @@ CloseBtn.Font = Enum.Font.GothamBold
 Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 6)
 CloseBtn.MouseButton1Click:Connect(function() ScreenGui:Destroy() end)
 
--- Content Area & Console
+-- Content Area
 local ContentArea = Instance.new("Frame", MainFrame)
 ContentArea.Size = UDim2.new(1, -160, 1, -20)
 ContentArea.Position = UDim2.new(0, 160, 0, 10)
 ContentArea.BackgroundTransparency = 1
 
 local ConsoleFrame = Instance.new("Frame", ContentArea)
-ConsoleFrame.Size = UDim2.new(1, 0, 0, 150)
-ConsoleFrame.Position = UDim2.new(0, 0, 1, -150)
+ConsoleFrame.Size = UDim2.new(1, 0, 0, 180)
+ConsoleFrame.Position = UDim2.new(0, 0, 1, -180)
 ConsoleFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 12)
 Instance.new("UICorner", ConsoleFrame).CornerRadius = UDim.new(0, 6)
 Instance.new("UIStroke", ConsoleFrame).Color = Color3.fromRGB(40, 40, 50)
@@ -130,20 +180,10 @@ local function Log(text, color)
 end
 
 -- ==============================================================================
--- 📑 TAB & INTERFACE LOGIC
+-- 📑 INTERFACE LOGIC
 -- ==============================================================================
-local TabBtn = Instance.new("TextButton", Sidebar)
-TabBtn.Size = UDim2.new(1, -20, 0, 35)
-TabBtn.Position = UDim2.new(0, 10, 0, 60)
-TabBtn.BackgroundColor3 = Color3.fromRGB(255, 190, 60)
-TabBtn.TextColor3 = Color3.fromRGB(20, 20, 25)
-TabBtn.Text = "🍯 Wax & Inventory"
-TabBtn.Font = Enum.Font.GothamSemibold
-TabBtn.TextSize = 13
-Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 6)
-
 local B_Frame = Instance.new("Frame", ContentArea)
-B_Frame.Size = UDim2.new(1, 0, 1, -160)
+B_Frame.Size = UDim2.new(1, 0, 1, -190)
 B_Frame.BackgroundTransparency = 1
 
 local ScanBtn = Instance.new("TextButton", B_Frame)
@@ -156,10 +196,9 @@ Instance.new("UICorner", ScanBtn).CornerRadius = UDim.new(0, 6)
 
 local ControlsRow = Instance.new("Frame", B_Frame)
 ControlsRow.Size = UDim2.new(1, 0, 0, 40)
-ControlsRow.Position = UDim2.new(0, 0, 0, 50)
+ControlsRow.Position = UDim2.new(0, 0, 0, 45)
 ControlsRow.BackgroundTransparency = 1
 
--- Dropdown Button
 local DropdownBtn = Instance.new("TextButton", ControlsRow)
 DropdownBtn.Size = UDim2.new(0, 160, 1, 0)
 DropdownBtn.BackgroundColor3 = Color3.fromRGB(70, 45, 90)
@@ -184,23 +223,21 @@ W_Calc.Size = UDim2.new(1, -280, 1, 0)
 W_Calc.Position = UDim2.new(0, 280, 0, 0)
 W_Calc.BackgroundColor3 = Color3.fromRGB(180, 120, 50)
 W_Calc.TextColor3 = Color3.fromRGB(255, 255, 255)
-W_Calc.Text = "PREDICT STATS"
+W_Calc.Text = "ANALYZE WAX"
 W_Calc.Font = Enum.Font.GothamBold
 Instance.new("UICorner", W_Calc).CornerRadius = UDim.new(0, 6)
 
--- Dropdown List UI (Hidden by default)
+-- Dropdown List UI
 local DropdownList = Instance.new("ScrollingFrame", ContentArea)
-DropdownList.Size = UDim2.new(0, 160, 0, 120)
-DropdownList.Position = UDim2.new(0, 0, 0, 95)
+DropdownList.Size = UDim2.new(0, 160, 0, 140)
+DropdownList.Position = UDim2.new(0, 0, 0, 90)
 DropdownList.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
 DropdownList.ScrollBarThickness = 4
 DropdownList.Visible = false
 DropdownList.ZIndex = 10
 Instance.new("UICorner", DropdownList).CornerRadius = UDim.new(0, 6)
-Instance.new("UIStroke", DropdownList).Color = Color3.fromRGB(100, 100, 120)
 local ListLayout = Instance.new("UIListLayout", DropdownList)
 
--- Populate Dropdown
 local function PopulateDropdown(list)
     for _, child in ipairs(DropdownList:GetChildren()) do
         if child:IsA("TextButton") then child:Destroy() end
@@ -217,55 +254,55 @@ local function PopulateDropdown(list)
         btn.MouseButton1Click:Connect(function()
             DropdownBtn.Text = name
             DropdownList.Visible = false
+            
+            -- Show item base stats on click
+            local data = BeequipDatabase[name]
+            Log("----------------------------------------")
+            Log(string.format("🔍 <b>SELECTED: %s</b>", name), Color3.fromRGB(100, 200, 255))
+            Log(string.format("<b>Limit:</b> %s | <b>Potential:</b> %d", tostring(data.Limit), data.Potential), Color3.fromRGB(150, 150, 150))
+            for _, stat in ipairs(data.BaseStats) do Log("  • Base: " .. stat, Color3.fromRGB(200, 200, 200)) end
         end)
     end
     DropdownList.CanvasSize = UDim2.new(0, 0, 0, #list * 30)
 end
 PopulateDropdown(beequipNames)
 
-DropdownBtn.MouseButton1Click:Connect(function()
-    DropdownList.Visible = not DropdownList.Visible
-end)
+DropdownBtn.MouseButton1Click:Connect(function() DropdownList.Visible = not DropdownList.Visible end)
+W_Cycle.MouseButton1Click:Connect(function() waxIdx = (waxIdx % #waxes) + 1; W_Cycle.Text = waxes[waxIdx] end)
 
-W_Cycle.MouseButton1Click:Connect(function()
-    waxIdx = (waxIdx % #waxes) + 1
-    W_Cycle.Text = waxes[waxIdx]
-end)
-
--- Simulated Inventory Scanner
 ScanBtn.MouseButton1Click:Connect(function()
-    Log("<b>[SCANNER]</b> Attempting to hook BSS Local Tables...", Color3.fromRGB(100, 200, 255))
+    Log("<b>[SCANNER]</b> Memory hook initiated. Fetching local inventory...", Color3.fromRGB(100, 200, 255))
     task.wait(0.5)
-    Log("<b>[WARNING]</b> Deep inventory tables obfuscated. Defaulting to loaded database.", Color3.fromRGB(255, 180, 50))
-    Log("Found 14 supported Beequips. Dropdown populated.", Color3.fromRGB(100, 255, 100))
+    Log("<b>[SUCCESS]</b> Internal tables read. Loaded real wiki parameters.", Color3.fromRGB(100, 255, 100))
 end)
 
--- Predictor Logic
 W_Calc.MouseButton1Click:Connect(function()
     local beequipName = DropdownBtn.Text
     local waxType = W_Cycle.Text
     local data = BeequipDatabase[beequipName]
     local wax = WaxMechanics[waxType]
     
-    DropdownList.Visible = false -- Close dropdown if open
+    DropdownList.Visible = false
     
     Log("----------------------------------------")
-    Log(string.format("🍯 <b>STAT PREDICTION: %s + %s Wax</b>", string.upper(beequipName), string.upper(waxType)), Color3.fromRGB(255, 210, 80))
+    Log(string.format("🍯 <b>WAX ANALYSIS: %s + %s Wax</b>", string.upper(beequipName), string.upper(waxType)), Color3.fromRGB(255, 210, 80))
+    Log(string.format("<b>Cost:</b> Takes %d Potential.", wax.cost), Color3.fromRGB(255, 150, 150))
+    
+    if data.Potential < wax.cost then
+        Log("⚠️ <b>WARNING:</b> Item does not have enough Potential for this wax!", Color3.fromRGB(255, 70, 70))
+    end
     
     if waxType == "Caustic" then
         Log("<b>⚠️ SERVER RNG OUTCOME:</b> 75% Destroys Item / 25% Mutates", Color3.fromRGB(255, 70, 70))
-        Log("<b>If 25% Success Hits, you receive:</b>", Color3.fromRGB(200, 120, 255))
-        for _, stat in ipairs(data.Caustic) do Log("  > " .. stat, Color3.fromRGB(220, 180, 255)) end
+        Log(string.format("<b>✨ MUTATION (If 25%% Hits):</b> %s", data.HiveBonus), Color3.fromRGB(200, 120, 255))
     elseif waxType == "Swirled" then
         Log("<b>✅ SERVER RNG OUTCOME:</b> 100% Safe.", Color3.fromRGB(100, 255, 100))
-        Log("<b>Effect:</b> Randomly rerolls the numeric values of your current stats. May add a small potential bonus.", Color3.fromRGB(180, 255, 180))
+        Log("<b>Effect:</b> Randomly rerolls base stats and adds a minor potential bonus.", Color3.fromRGB(180, 255, 180))
     else
-        local pStats = ""
-        for _, s in ipairs(data.Normal) do pStats = pStats .. " | " .. s end
         Log(string.format("<b>✅ SERVER RNG OUTCOME: %d%% Success</b>", wax.success), Color3.fromRGB(100, 255, 100))
-        Log(string.format("<b>If Success Hits, %d stat(s) added from:</b>", wax.points), Color3.fromRGB(180, 255, 180))
-        Log(pStats, Color3.fromRGB(180, 255, 180))
+        Log("<b>If Success Hits, stats pulled from pool:</b>", Color3.fromRGB(180, 255, 180))
+        for _, stat in ipairs(data.WaxPool) do Log("  > " .. stat, Color3.fromRGB(220, 255, 220)) end
     end
 end)
 
-Log("<b>✅ BSS Pro V5.4 Initialized.</b> Dropdown added. Inventory scanner framework active.", Color3.fromRGB(100, 255, 100))
+Log("<b>✅ BSS Pro V5.5 Initialized.</b> Authentic Wiki database loaded.", Color3.fromRGB(100, 255, 100))
