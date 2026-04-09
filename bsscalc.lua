@@ -1,5 +1,5 @@
 -- ==============================================================================
--- 🐝 BSS ALL-IN-ONE ADVISOR & WIKI ENGINE | V5 MODERN DASHBOARD
+-- 🐝 BSS ALL-IN-ONE ADVISOR & WIKI ENGINE | V5.1 EXPANDED DATABASE
 -- ==============================================================================
 local CoreGui = game:GetService("CoreGui")
 local Players = game:GetService("Players")
@@ -13,20 +13,34 @@ pcall(function()
 end)
 
 -- ==============================================================================
--- 🧮 MATH & DATABASE ENGINE
+-- 🧮 MATH & DATABASE ENGINE (UPDATED WITH USER DATA)
 -- ==============================================================================
 local function GetBinomialProbability(chance, attempts)
     if attempts <= 0 then return 0 end
     return (1 - math.pow(1 - (1 / chance), attempts)) * 100 
 end
 
+-- Mapped from provided custom dataset
 local BeequipDatabase = {
-    ["Pink Shades"] = { Normal = {"+% Critical Power", "+% Super Critical Chance", "+% Critical Chance"}, Caustic = {"[Hive] +% Super-Crit Chance", "+Ability: Focus"}, Limit = "1 per hive" },
-    ["Kazoo"] = { Normal = {"+% Convert Amount", "-% Bee Energy", "+% Bee Movespeed"}, Caustic = {"+Ability: Melody", "[Hive] +% Pollen"}, Limit = "No Limit" },
-    ["Elf Cap"] = { Normal = {"+Convert Amount", "+Capacity", "+% Honey from Tokens", "+% Convert Rate"}, Caustic = {"[Hive] +% Convert at Hive", "[Hive] +Capacity", "+Ability: Blue Boost"}, Limit = "3 per hive" },
-    ["Beret"] = { Normal = {"+Convert Amount", "+% Bubble Pollen", "+% Bee Movespeed"}, Caustic = {"[Hive] +% Bubble Pollen", "[Hive] +% Bee Movespeed"}, Limit = "No Limit" },
-    ["Sweatband"] = { Normal = {"+Red Field Capacity", "+% Bee Movespeed", "+Convert Rate"}, Caustic = {"+Ability: Red Boost", "[Hive] +% Red Pollen", "[Hive] +% Flame Duration"}, Limit = "No Limit" },
-    ["Pinecone"] = { Normal = {"+Pine Tree Pollen", "+Capacity", "+% Convert Amount"}, Caustic = {"+Ability: Pine Tree Drop", "[Hive] +% Capacity"}, Limit = "No Limit" }
+    ["Paperclip"] = { Normal = {"+Gather (3-16)", "+% Energy (5-20%)", "+% Bee Attack"}, Caustic = {"[Hive] N/A"}, Limit = "No Limit" },
+    ["Thumbtack"] = { Normal = {"+Gather", "+% Crit Power (5-40%)", "+% Bee Attack (2-35%)"}, Caustic = {"[Hive] +% Red Attack"}, Limit = "No Limit" },
+    ["Camo Bandana"] = { Normal = {"+Gather (10-95%)", "+% Buzz Bomb Pollen (15-105%)"}, Caustic = {"[Hive] +% Pumpkin/Coconut Capacity"}, Limit = "No Limit" },
+    ["Bottle Cap"] = { Normal = {"+Convert (10-95)", "+% Crit Power (5-60%)"}, Caustic = {"[Hive] +% Critical Power"}, Limit = "No Limit" },
+    ["Kazoo"] = { Normal = {"+% Convert (20-90%)", "+% Crit Power (20-90%)", "-Energy"}, Caustic = {"[Hive] +% Critical Power"}, Limit = "No Limit" },
+    ["Whistle"] = { Normal = {"+% Move Speed (5-40%)", "+% Crit Power (15-85%)"}, Caustic = {"[Hive] xPlayer Move Speed"}, Limit = "No Limit" },
+    ["Smiley Sticker"] = { Normal = {"+% Energy (15-85%)", "+% Bomb Pollen (10-60%)"}, Caustic = {"[Hive] +% Max Bee Energy"}, Limit = "No Limit" },
+    ["Charm Bracelet"] = { Normal = {"+% Convert (15-20%)", "+% Crit Chance (1-15%)"}, Caustic = {"[Hive] +% Loot Luck"}, Limit = "No Limit" },
+    ["Pink Shades"] = { Normal = {"+% Ability Pollen (15-65%)", "+% Crit Power (25-50%)"}, Caustic = {"[Hive] +% Super-Crit Chance"}, Limit = "1 per hive" },
+    ["Demon Talisman"] = { Normal = {"+% Bee Attack (50-95%)", "+% Gather (50-160%)"}, Caustic = {"[Hive] +% Red Bomb Pollen"}, Limit = "1 per hive" },
+    ["Elf Cap"] = { Normal = {"+Gather", "+Energy", "+% Red/Blue Pollen"}, Caustic = {"[Hive] +% Convert at Hive", "[Hive] +Capacity"}, Limit = "3 per hive" },
+    ["Single Mitten"] = { Normal = {"+Convert Amount", "+% White Pollen"}, Caustic = {"[Hive] Varies"}, Limit = "No Limit" },
+    ["Warm Scarf"] = { Normal = {"+% White/Blue Pollen", "+% Energy"}, Caustic = {"[Hive] Varies"}, Limit = "No Limit" },
+    ["Pinecone"] = { Normal = {"+% Blue Pollen"}, Caustic = {"[Hive] +% Pine Tree Capacity"}, Limit = "No Limit" },
+    ["Snowglobe"] = { Normal = {"+% Blue Pollen", "+% Bubble Pollen"}, Caustic = {"[Hive] Varies"}, Limit = "No Limit" },
+    ["Reindeer Antlers"] = { Normal = {"+% Focus/Melody", "+% Capacity"}, Caustic = {"[Hive] Varies"}, Limit = "1 per hive" },
+    ["Toy Drum"] = { Normal = {"+% Bee Ability Rate", "+% Haste Duration"}, Caustic = {"[Hive] Varies"}, Limit = "No Limit" },
+    ["Toy Horn"] = { Normal = {"+% Convert Amount", "+Ability: Music"}, Caustic = {"[Hive] Varies"}, Limit = "No Limit" },
+    ["Beesmas Tree Hat"] = { Normal = {"+% Gather", "+% Pollen", "+% Convert Rate"}, Caustic = {"[Hive] Varies"}, Limit = "1 per hive" }
 }
 
 local beequipNames = {}
@@ -68,7 +82,7 @@ Sidebar.BorderSizePixel = 0
 Sidebar.Parent = MainFrame
 Instance.new("UICorner", Sidebar).CornerRadius = UDim.new(0, 10)
 
-local SidebarCover = Instance.new("Frame") -- Hides right corner radius to blend with main body
+local SidebarCover = Instance.new("Frame")
 SidebarCover.Size = UDim2.new(0, 10, 1, 0)
 SidebarCover.Position = UDim2.new(1, -10, 0, 0)
 SidebarCover.BackgroundColor3 = Color3.fromRGB(22, 22, 26)
@@ -102,7 +116,7 @@ ContentArea.Position = UDim2.new(0, 150, 0, 10)
 ContentArea.BackgroundTransparency = 1
 ContentArea.Parent = MainFrame
 
--- Output Console (Shared across tabs)
+-- Output Console
 local ConsoleFrame = Instance.new("Frame")
 ConsoleFrame.Size = UDim2.new(1, 0, 0, 140)
 ConsoleFrame.Position = UDim2.new(0, 0, 1, -140)
@@ -160,7 +174,7 @@ end
 
 local function CreateTabFrame()
     local frame = Instance.new("Frame")
-    frame.Size = UDim2.new(1, 0, 1, -150) -- Leaves room for console
+    frame.Size = UDim2.new(1, 0, 1, -150)
     frame.Position = UDim2.new(0, 0, 0, 0)
     frame.BackgroundTransparency = 1
     frame.Visible = false
@@ -348,6 +362,7 @@ W_Calc.MouseButton1Click:Connect(function()
     Log("----------------------------------------")
     Log(string.format("🍯 <b>WAXING: %s with %s Wax</b>", string.upper(beequipName), string.upper(waxType)), Color3.fromRGB(255, 210, 80))
     Log(string.format("<b>Mechanics:</b> %s", wax.desc))
+    Log(string.format("<b>Limit:</b> %s", data.Limit), Color3.fromRGB(150, 150, 150))
     
     if waxType == "Caustic" then
         Log("<b>⚠️ DANGER: 75% CHANCE TO DELETE ITEM FOREVER.</b>", Color3.fromRGB(255, 70, 70))
@@ -367,4 +382,4 @@ Tabs["Beequips"].MouseButton1Click:Connect(function() SwitchTab("Beequips") end)
 
 -- Initialize
 SwitchTab("Probabilities")
-Log("<b>✅ BSS Pro V5 Initialized.</b> Server RNG is protected, relying on verified Wiki Statistical Analysis.", Color3.fromRGB(100, 255, 100))
+Log(string.format("<b>✅ BSS Pro V5.1 Initialized.</b> Loaded %d custom Beequips into the database.", #beequipNames), Color3.fromRGB(100, 255, 100))
