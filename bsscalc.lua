@@ -1,5 +1,5 @@
 -- ==============================================================================
--- 🐝 BSS ALL-IN-ONE CALCULATOR & ADVISOR | DELTA GUI EDITION
+-- 🐝 BSS ALL-IN-ONE CALCULATOR & ADVISOR | DELTA GUI EDITION (V3)
 -- ==============================================================================
 local CoreGui = game:GetService("CoreGui")
 local Players = game:GetService("Players")
@@ -32,6 +32,11 @@ local BeequipDatabase = {
     ["Pinecone"] = { NormalStats = {"+Pine Tree Pollen", "+Capacity", "+% Convert Amount"}, CausticStats = {"+Ability: Pine Tree Drop", "[Hive] +% Capacity"} }
 }
 
+-- Create an array of Beequip names for the cycler
+local beequipNames = {}
+for name, _ in pairs(BeequipDatabase) do table.insert(beequipNames, name) end
+table.sort(beequipNames)
+
 local WaxMechanics = {
     ["Soft"]    = {success = 100, destroy = 0,  points = 1, allowsCaustic = false},
     ["Hard"]    = {success = 60,  destroy = 0,  points = 2, allowsCaustic = false},
@@ -46,7 +51,6 @@ local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = GUI_NAME
 ScreenGui.ResetOnSpawn = false
 
--- Securely mount to executor GUI if possible, else PlayerGui
 local success = pcall(function() ScreenGui.Parent = gethui() end)
 if not success or not ScreenGui.Parent then ScreenGui.Parent = CoreGui end
 
@@ -112,7 +116,6 @@ local function LogOutput(text, color)
     msg.TextXAlignment = Enum.TextXAlignment.Left
     msg.Parent = OutputScroll
     
-    -- Auto-scroll
     task.wait(0.05)
     OutputScroll.CanvasPosition = Vector2.new(0, OutputScroll.AbsoluteCanvasSize.Y)
 end
@@ -261,20 +264,22 @@ CreateRow(45, "🧪 RJelly:", function(row)
 end)
 
 -- ---------------------------------------------------------
--- ROW 3: WAX PREDICTION
+-- ROW 3: WAX PREDICTION (UPDATED - NO TYPING!)
 -- ---------------------------------------------------------
+local bqIdx = 1
 local waxes = {"Caustic", "Hard", "Soft", "Swirled"}
 local waxIdx = 1
 
 CreateRow(90, "🍯 Waxing:", function(row)
-    local ItemBox = Instance.new("TextBox")
-    ItemBox.Size = UDim2.new(0, 90, 0, 25)
-    ItemBox.Position = UDim2.new(0, 90, 0, 5)
-    ItemBox.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
-    ItemBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ItemBox.PlaceholderText = "Item (Elf Cap)"
-    ItemBox.Text = ""
-    ItemBox.Parent = row
+    -- NEW: Cycle Button for Beequip instead of TextBox
+    local ItemCycleBtn = Instance.new("TextButton")
+    ItemCycleBtn.Size = UDim2.new(0, 90, 0, 25)
+    ItemCycleBtn.Position = UDim2.new(0, 90, 0, 5)
+    ItemCycleBtn.BackgroundColor3 = Color3.fromRGB(60, 40, 80)
+    ItemCycleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ItemCycleBtn.TextScaled = true -- Adjusts font size to fit long names
+    ItemCycleBtn.Text = beequipNames[bqIdx]
+    ItemCycleBtn.Parent = row
 
     local CycleBtn = Instance.new("TextButton")
     CycleBtn.Size = UDim2.new(0, 90, 0, 25)
@@ -293,26 +298,26 @@ CreateRow(90, "🍯 Waxing:", function(row)
     CalcBtn.Text = "PREDICT RESULTS"
     CalcBtn.Parent = row
 
+    -- Logic to cycle through Beequip Names
+    ItemCycleBtn.MouseButton1Click:Connect(function()
+        bqIdx = (bqIdx % #beequipNames) + 1
+        ItemCycleBtn.Text = beequipNames[bqIdx]
+    end)
+
+    -- Logic to cycle through Wax Types
     CycleBtn.MouseButton1Click:Connect(function()
         waxIdx = (waxIdx % #waxes) + 1
         CycleBtn.Text = waxes[waxIdx]
     end)
     
     CalcBtn.MouseButton1Click:Connect(function()
-        local beequipName = ItemBox.Text
+        local beequipName = ItemCycleBtn.Text
         local waxType = CycleBtn.Text
         
-        -- Simple exact/partial match
-        local beequipData = nil
-        for dbName, data in pairs(BeequipDatabase) do
-            if string.lower(dbName) == string.lower(beequipName) then beequipData = data; break end
-        end
-        
-        if not beequipData then
-            return LogOutput(string.format("[!] Item '%s' not in database. Supported: Elf Cap, Pink Shades, Kazoo, Beret, Sweatband, Pinecone", beequipName), Color3.fromRGB(255, 100, 100))
-        end
-
+        -- Exact match using our cycled name
+        local beequipData = BeequipDatabase[beequipName]
         local waxInfo = WaxMechanics[waxType]
+        
         LogOutput("==============================")
         LogOutput(string.format("🍯 WAXING: %s with %s Wax", string.upper(beequipName), waxType), Color3.fromRGB(255, 200, 50))
         LogOutput(string.format("Success: %d%% | Destroy: %d%%", waxInfo.success, waxInfo.destroy))
