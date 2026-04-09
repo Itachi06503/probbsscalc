@@ -1,5 +1,5 @@
 -- ==============================================================================
--- 🐝 BSS ALL-IN-ONE ADVISOR & WIKI ENGINE | V5.1 EXPANDED DATABASE
+-- 🐝 BSS ALL-IN-ONE ADVISOR & WIKI ENGINE | V5.2 FOCUSED DATABASE
 -- ==============================================================================
 local CoreGui = game:GetService("CoreGui")
 local Players = game:GetService("Players")
@@ -13,34 +13,29 @@ pcall(function()
 end)
 
 -- ==============================================================================
--- 🧮 MATH & DATABASE ENGINE (UPDATED WITH USER DATA)
+-- 🧮 MATH & FOCUSED DATABASE ENGINE
 -- ==============================================================================
 local function GetBinomialProbability(chance, attempts)
     if attempts <= 0 then return 0 end
     return (1 - math.pow(1 - (1 / chance), attempts)) * 100 
 end
 
--- Mapped from provided custom dataset
+-- Strictly limited to user-requested Beequips
 local BeequipDatabase = {
-    ["Paperclip"] = { Normal = {"+Gather (3-16)", "+% Energy (5-20%)", "+% Bee Attack"}, Caustic = {"[Hive] N/A"}, Limit = "No Limit" },
-    ["Thumbtack"] = { Normal = {"+Gather", "+% Crit Power (5-40%)", "+% Bee Attack (2-35%)"}, Caustic = {"[Hive] +% Red Attack"}, Limit = "No Limit" },
-    ["Camo Bandana"] = { Normal = {"+Gather (10-95%)", "+% Buzz Bomb Pollen (15-105%)"}, Caustic = {"[Hive] +% Pumpkin/Coconut Capacity"}, Limit = "No Limit" },
-    ["Bottle Cap"] = { Normal = {"+Convert (10-95)", "+% Crit Power (5-60%)"}, Caustic = {"[Hive] +% Critical Power"}, Limit = "No Limit" },
-    ["Kazoo"] = { Normal = {"+% Convert (20-90%)", "+% Crit Power (20-90%)", "-Energy"}, Caustic = {"[Hive] +% Critical Power"}, Limit = "No Limit" },
-    ["Whistle"] = { Normal = {"+% Move Speed (5-40%)", "+% Crit Power (15-85%)"}, Caustic = {"[Hive] xPlayer Move Speed"}, Limit = "No Limit" },
-    ["Smiley Sticker"] = { Normal = {"+% Energy (15-85%)", "+% Bomb Pollen (10-60%)"}, Caustic = {"[Hive] +% Max Bee Energy"}, Limit = "No Limit" },
-    ["Charm Bracelet"] = { Normal = {"+% Convert (15-20%)", "+% Crit Chance (1-15%)"}, Caustic = {"[Hive] +% Loot Luck"}, Limit = "No Limit" },
     ["Pink Shades"] = { Normal = {"+% Ability Pollen (15-65%)", "+% Crit Power (25-50%)"}, Caustic = {"[Hive] +% Super-Crit Chance"}, Limit = "1 per hive" },
-    ["Demon Talisman"] = { Normal = {"+% Bee Attack (50-95%)", "+% Gather (50-160%)"}, Caustic = {"[Hive] +% Red Bomb Pollen"}, Limit = "1 per hive" },
-    ["Elf Cap"] = { Normal = {"+Gather", "+Energy", "+% Red/Blue Pollen"}, Caustic = {"[Hive] +% Convert at Hive", "[Hive] +Capacity"}, Limit = "3 per hive" },
-    ["Single Mitten"] = { Normal = {"+Convert Amount", "+% White Pollen"}, Caustic = {"[Hive] Varies"}, Limit = "No Limit" },
-    ["Warm Scarf"] = { Normal = {"+% White/Blue Pollen", "+% Energy"}, Caustic = {"[Hive] Varies"}, Limit = "No Limit" },
-    ["Pinecone"] = { Normal = {"+% Blue Pollen"}, Caustic = {"[Hive] +% Pine Tree Capacity"}, Limit = "No Limit" },
-    ["Snowglobe"] = { Normal = {"+% Blue Pollen", "+% Bubble Pollen"}, Caustic = {"[Hive] Varies"}, Limit = "No Limit" },
-    ["Reindeer Antlers"] = { Normal = {"+% Focus/Melody", "+% Capacity"}, Caustic = {"[Hive] Varies"}, Limit = "1 per hive" },
-    ["Toy Drum"] = { Normal = {"+% Bee Ability Rate", "+% Haste Duration"}, Caustic = {"[Hive] Varies"}, Limit = "No Limit" },
-    ["Toy Horn"] = { Normal = {"+% Convert Amount", "+Ability: Music"}, Caustic = {"[Hive] Varies"}, Limit = "No Limit" },
-    ["Beesmas Tree Hat"] = { Normal = {"+% Gather", "+% Pollen", "+% Convert Rate"}, Caustic = {"[Hive] Varies"}, Limit = "1 per hive" }
+    ["Toy Horn"] = { Normal = {"+% Convert Amount", "+Ability: Music"}, Caustic = {"[Hive] +Attack"}, Limit = "No Limit" },
+    ["Toy Drum"] = { Normal = {"+% Bee Ability Rate", "+% Haste Duration"}, Caustic = {"[Hive] +% Bee Movespeed"}, Limit = "No Limit" },
+    ["Charm Bracelet"] = { Normal = {"+% Convert (15-20%)", "+% Crit Chance (1-15%)"}, Caustic = {"[Hive] +% Loot Luck"}, Limit = "No Limit" },
+    ["Whistle"] = { Normal = {"+% Move Speed (5-40%)", "+% Crit Power (15-85%)"}, Caustic = {"[Hive] xPlayer Move Speed"}, Limit = "No Limit" },
+    ["Paperclip"] = { Normal = {"+Gather (3-16)", "+% Energy (5-20%)", "+% Bee Attack"}, Caustic = {"[Hive] N/A"}, Limit = "No Limit" },
+    ["Paper Angel"] = { Normal = {"+% White Pollen", "+% Convert Rate", "+Capacity"}, Caustic = {"+Ability: Token Link", "[Hive] +% White Pollen"}, Limit = "No Limit" },
+    ["Camphor Lip Balm"] = { Normal = {"+Convert Amount", "+% Blue Pollen", "+% White Pollen"}, Caustic = {"[Hive] +% Blue Pollen", "[Hive] +Capacity"}, Limit = "No Limit" },
+    ["Rose Headband"] = { Normal = {"+% Red Pollen", "+% White Pollen", "+Capacity"}, Caustic = {"[Hive] +% Red Pollen", "[Hive] +% Convert Rate"}, Limit = "No Limit" },
+    ["Candy Ring"] = { Normal = {"+% Honey from Tokens", "+% Convert Amount", "+% Loot Luck"}, Caustic = {"+Ability: Haste", "[Hive] +% Honey from Tokens"}, Limit = "No Limit" },
+    ["Bead Lizard"] = { Normal = {"+% Blue Pollen", "+% Bee Movespeed", "+Capacity"}, Caustic = {"+Ability: Blue Boost", "[Hive] +% Blue Pollen"}, Limit = "No Limit" },
+    ["Poinsettia"] = { Normal = {"+% Red Pollen", "+Capacity", "+% Convert Amount"}, Caustic = {"+Ability: Red Boost", "[Hive] +% Red Pollen"}, Limit = "No Limit" },
+    ["Peppermint Antennas"] = { Normal = {"+% Capacity", "+% Convert Rate", "+% Bee Movespeed"}, Caustic = {"+Ability: Focus", "[Hive] +% Capacity"}, Limit = "No Limit" },
+    ["Elf Cap"] = { Normal = {"+Gather", "+Energy", "+% Red/Blue Pollen"}, Caustic = {"[Hive] +% Convert at Hive", "[Hive] +Capacity"}, Limit = "3 per hive" }
 }
 
 local beequipNames = {}
@@ -197,7 +192,7 @@ local function SwitchTab(tabName)
 end
 
 -- ---------------------------------------------------------
--- TAB 1: GAMBLE PROBABILITY (Treats & Jellies)
+-- TAB 1: GAMBLE PROBABILITY
 -- ---------------------------------------------------------
 Tabs["Probabilities"] = CreateTabButton("🎲 Probabilities", 60)
 TabFrames["Probabilities"] = CreateTabFrame()
@@ -382,4 +377,4 @@ Tabs["Beequips"].MouseButton1Click:Connect(function() SwitchTab("Beequips") end)
 
 -- Initialize
 SwitchTab("Probabilities")
-Log(string.format("<b>✅ BSS Pro V5.1 Initialized.</b> Loaded %d custom Beequips into the database.", #beequipNames), Color3.fromRGB(100, 255, 100))
+Log(string.format("<b>✅ BSS Pro V5.2 Initialized.</b> Database constrained to exactly %d target Beequips.", #beequipNames), Color3.fromRGB(100, 255, 100))
