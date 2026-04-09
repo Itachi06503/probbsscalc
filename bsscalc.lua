@@ -1,5 +1,5 @@
 -- ==============================================================================
--- 🐝 BSS ALL-IN-ONE ADVISOR & WIKI ENGINE | V5.2 FOCUSED DATABASE
+-- 🐝 BSS BEEQUIP ADVISOR ENGINE | V5.3 (STRIPPED & FOCUSED)
 -- ==============================================================================
 local CoreGui = game:GetService("CoreGui")
 local Players = game:GetService("Players")
@@ -13,14 +13,8 @@ pcall(function()
 end)
 
 -- ==============================================================================
--- 🧮 MATH & FOCUSED DATABASE ENGINE
+-- 🧮 FOCUSED DATABASE ENGINE
 -- ==============================================================================
-local function GetBinomialProbability(chance, attempts)
-    if attempts <= 0 then return 0 end
-    return (1 - math.pow(1 - (1 / chance), attempts)) * 100 
-end
-
--- Strictly limited to user-requested Beequips
 local BeequipDatabase = {
     ["Pink Shades"] = { Normal = {"+% Ability Pollen (15-65%)", "+% Crit Power (25-50%)"}, Caustic = {"[Hive] +% Super-Crit Chance"}, Limit = "1 per hive" },
     ["Toy Horn"] = { Normal = {"+% Convert Amount", "+Ability: Music"}, Caustic = {"[Hive] +Attack"}, Limit = "No Limit" },
@@ -192,112 +186,9 @@ local function SwitchTab(tabName)
 end
 
 -- ---------------------------------------------------------
--- TAB 1: GAMBLE PROBABILITY
+-- TAB 1: BEEQUIP SIMULATOR
 -- ---------------------------------------------------------
-Tabs["Probabilities"] = CreateTabButton("🎲 Probabilities", 60)
-TabFrames["Probabilities"] = CreateTabFrame()
-
-local P_Frame = TabFrames["Probabilities"]
-Instance.new("UIListLayout", P_Frame).Padding = UDim.new(0, 10)
-
--- Treat Row
-local T_Row = Instance.new("Frame", P_Frame)
-T_Row.Size = UDim2.new(1, 0, 0, 40)
-T_Row.BackgroundTransparency = 1
-
-local giftIdx = 1
-local giftRarities = {"Mythic", "Legendary", "Epic", "Rare"}
-local T_Cycle = Instance.new("TextButton", T_Row)
-T_Cycle.Size = UDim2.new(0, 110, 1, 0)
-T_Cycle.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
-T_Cycle.TextColor3 = Color3.fromRGB(255, 255, 255)
-T_Cycle.Text = giftRarities[giftIdx]
-T_Cycle.Font = Enum.Font.GothamBold
-Instance.new("UICorner", T_Cycle).CornerRadius = UDim.new(0, 6)
-
-local T_Input = Instance.new("TextBox", T_Row)
-T_Input.Size = UDim2.new(0, 110, 1, 0)
-T_Input.Position = UDim2.new(0, 120, 0, 0)
-T_Input.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
-T_Input.TextColor3 = Color3.fromRGB(255, 255, 255)
-T_Input.PlaceholderText = "Fruits (Amt)"
-T_Input.Text = ""
-T_Input.Font = Enum.Font.Gotham
-Instance.new("UICorner", T_Input).CornerRadius = UDim.new(0, 6)
-
-local T_Calc = Instance.new("TextButton", T_Row)
-T_Calc.Size = UDim2.new(1, -240, 1, 0)
-T_Calc.Position = UDim2.new(0, 240, 0, 0)
-T_Calc.BackgroundColor3 = Color3.fromRGB(60, 140, 80)
-T_Calc.TextColor3 = Color3.fromRGB(255, 255, 255)
-T_Calc.Text = "CALC GIFTING"
-T_Calc.Font = Enum.Font.GothamBold
-Instance.new("UICorner", T_Calc).CornerRadius = UDim.new(0, 6)
-
-T_Cycle.MouseButton1Click:Connect(function()
-    giftIdx = (giftIdx % #giftRarities) + 1
-    T_Cycle.Text = giftRarities[giftIdx]
-end)
-
-T_Calc.MouseButton1Click:Connect(function()
-    local amt = tonumber(T_Input.Text)
-    if not amt then return Log("<b>[!] Enter valid fruit amount.</b>", Color3.fromRGB(255, 80, 80)) end
-    local odds = { ["Rare"] = 8000, ["Epic"] = 10000, ["Legendary"] = 12000, ["Mythic"] = 24000 }
-    local chance = odds[T_Cycle.Text]
-    Log(string.format("🍓 <b>%s BEE:</b> %,d fruits | <b>%.2f%% Chance</b>", string.upper(T_Cycle.Text), amt, GetBinomialProbability(chance, amt)), Color3.fromRGB(100, 255, 100))
-end)
-
--- Jelly Row
-local J_Row = Instance.new("Frame", P_Frame)
-J_Row.Size = UDim2.new(1, 0, 0, 40)
-J_Row.BackgroundTransparency = 1
-
-local jellyIdx = 1
-local jellyTargets = {"Mythic", "Gifted", "Legendary"}
-local J_Cycle = Instance.new("TextButton", J_Row)
-J_Cycle.Size = UDim2.new(0, 110, 1, 0)
-J_Cycle.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
-J_Cycle.TextColor3 = Color3.fromRGB(255, 255, 255)
-J_Cycle.Text = jellyTargets[jellyIdx]
-J_Cycle.Font = Enum.Font.GothamBold
-Instance.new("UICorner", J_Cycle).CornerRadius = UDim.new(0, 6)
-
-local J_Input = Instance.new("TextBox", J_Row)
-J_Input.Size = UDim2.new(0, 110, 1, 0)
-J_Input.Position = UDim2.new(0, 120, 0, 0)
-J_Input.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
-J_Input.TextColor3 = Color3.fromRGB(255, 255, 255)
-J_Input.PlaceholderText = "Jellies (Amt)"
-J_Input.Text = ""
-J_Input.Font = Enum.Font.Gotham
-Instance.new("UICorner", J_Input).CornerRadius = UDim.new(0, 6)
-
-local J_Calc = Instance.new("TextButton", J_Row)
-J_Calc.Size = UDim2.new(1, -240, 1, 0)
-J_Calc.Position = UDim2.new(0, 240, 0, 0)
-J_Calc.BackgroundColor3 = Color3.fromRGB(60, 120, 180)
-J_Calc.TextColor3 = Color3.fromRGB(255, 255, 255)
-J_Calc.Text = "CALC ROLLING"
-J_Calc.Font = Enum.Font.GothamBold
-Instance.new("UICorner", J_Calc).CornerRadius = UDim.new(0, 6)
-
-J_Cycle.MouseButton1Click:Connect(function()
-    jellyIdx = (jellyIdx % #jellyTargets) + 1
-    J_Cycle.Text = jellyTargets[jellyIdx]
-end)
-
-J_Calc.MouseButton1Click:Connect(function()
-    local amt = tonumber(J_Input.Text)
-    if not amt then return Log("<b>[!] Enter valid jelly amount.</b>", Color3.fromRGB(255, 80, 80)) end
-    local odds = { ["Legendary"] = 33, ["Gifted"] = 250, ["Mythic"] = 25000 }
-    local chance = odds[J_Cycle.Text]
-    Log(string.format("🧪 <b>%s ROLL:</b> %,d jellies | <b>%.2f%% Chance</b>", string.upper(J_Cycle.Text), amt, GetBinomialProbability(chance, amt)), Color3.fromRGB(150, 200, 255))
-end)
-
--- ---------------------------------------------------------
--- TAB 2: BEEQUIP SIMULATOR
--- ---------------------------------------------------------
-Tabs["Beequips"] = CreateTabButton("🍯 Wax Simulator", 105)
+Tabs["Beequips"] = CreateTabButton("🍯 Wax Simulator", 60)
 TabFrames["Beequips"] = CreateTabFrame()
 
 local B_Frame = TabFrames["Beequips"]
@@ -372,9 +263,8 @@ W_Calc.MouseButton1Click:Connect(function()
 end)
 
 -- Link Buttons to Tabs
-Tabs["Probabilities"].MouseButton1Click:Connect(function() SwitchTab("Probabilities") end)
 Tabs["Beequips"].MouseButton1Click:Connect(function() SwitchTab("Beequips") end)
 
 -- Initialize
-SwitchTab("Probabilities")
-Log(string.format("<b>✅ BSS Pro V5.2 Initialized.</b> Database constrained to exactly %d target Beequips.", #beequipNames), Color3.fromRGB(100, 255, 100))
+SwitchTab("Beequips")
+Log("<b>✅ BSS Pro V5.3 Initialized.</b> Bloat removed. Pure Beequip focus active.", Color3.fromRGB(100, 255, 100))
