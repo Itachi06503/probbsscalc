@@ -1,10 +1,10 @@
 -- ==============================================================================
--- 🐝 BSS ADVISOR ENGINE | V5.5 (REALISTIC STAT DATABASE UPDATE)
+-- 🐝 BSS ADVISOR ENGINE | V5.6 (WIKI ACCURACY UPDATE)
 -- ==============================================================================
 local CoreGui = game:GetService("CoreGui")
 local Players = game:GetService("Players")
 
-local GUI_NAME = "BSS_Advisor_Engine_V5_5"
+local GUI_NAME = "BSS_Advisor_Engine_V5_6"
 pcall(function()
     local target = gethui and gethui() or CoreGui
     if target:FindFirstChild(GUI_NAME) then
@@ -13,7 +13,7 @@ pcall(function()
 end)
 
 -- ==============================================================================
--- 🧮 AUTHENTIC BEEQUIP DATABASE (Based on Official Wiki)
+-- 🧮 AUTHENTIC BEEQUIP DATABASE
 -- ==============================================================================
 local BeequipDatabase = {
     ["Pink Shades"] = {
@@ -79,12 +79,13 @@ local BeequipDatabase = {
         WaxPool = {"+% Red Capacity", "+% Bee Attack"},
         HiveBonus = "+2-5% Hive Red Pollen"
     },
+    -- CORRECTED ELF CAP DATA
     ["Elf Cap"] = {
         Potential = 3,
-        Limit = 3,
-        BaseStats = {"+5-15 Gather Amount", "+10-30 Energy"},
-        WaxPool = {"+% Red/Blue Pollen", "+% Capacity"},
-        HiveBonus = "+1-3% Convert at Hive"
+        Limit = 2,
+        BaseStats = {"+25-50 Convert Amount", "+10-20% Convert Rate At Hive"},
+        WaxPool = {"+2-3 Convert Amount", "+1-2% Convert Rate At Hive"},
+        HiveBonus = "+1-3% Convert Rate At Hive (Hive Bonus) OR +% Honey At Hive"
     }
 }
 
@@ -305,4 +306,4 @@ W_Calc.MouseButton1Click:Connect(function()
     end
 end)
 
-Log("<b>✅ BSS Pro V5.5 Initialized.</b> Authentic Wiki database loaded.", Color3.fromRGB(100, 255, 100))
+Log("<b>✅ BSS Pro V5.6 Initialized.</b> Elf Cap data correctly synced with provided Wiki values.", Color3.fromRGB(100, 255, 100))
